@@ -1,0 +1,4 @@
+// Ignores the state file of Terraform
+
+.tfstate
+.readme.md
