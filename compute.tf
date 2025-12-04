@@ -7,7 +7,7 @@ provider "aws" {
 data "aws_ami" "ubuntu" {
     most_recent = true # Busca a mais recente
 
-    
+
 
     filter {
         name = "name"
@@ -16,7 +16,7 @@ data "aws_ami" "ubuntu" {
 
     owners = ["099720109477"] # ID da distribuidora oficial das imagens Ubunto na AWS
 }
-
+ 
 # Declara o recurso que sera criado, nesse caso uma instancia EC2 com o AMI do Ubuntu
 resource "aws_instance" "aws_server" {
     ami = data.aws_ami.ubuntu.id

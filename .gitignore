@@ -1,4 +1,21 @@
-// Ignores the state file of Terraform
+# Arquivos de estado local
+*.tfstate
+*.tfstate.*
 
-.tfstate
-.md
+# Pasta de plugins e módulos do Terraform
+.terraform/
+.terraform.lock.hcl
+
+# Arquivos de variáveis com senhas
+*.tfvars
+*.tfvars.json
+
+# Arquivos de log de erro
+crash.log
+
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
+
+# readme temporario
+*.md

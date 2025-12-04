@@ -16,7 +16,7 @@ resource "aws_security_group" "aws_sg"{
         protocol = "tcp"
         cdir_blocks = ["?"] # Ips allowed to access via HTTP
     }
-
+ 
     egress {
         cdir_blocks = ["?"] # Ips allowed to exit the instance
     }
