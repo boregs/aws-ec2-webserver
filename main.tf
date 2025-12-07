@@ -25,7 +25,7 @@ resource "aws_instance" "aws_server" {
     vpc_security_group_ids = [aws_security_group.aws_sg.id]
 
     tags = {
-        Name = "AWS Project Instance"
+        Name = var.namePrefix + "_EC2_Instance"
     }
 }
 
