@@ -1,0 +1,18 @@
+{
+	"name": "aws_project",
+	"version": "0.1.0",
+	"description": "Terraform helper scripts for the aws_project workspace",
+	"private": true,
+	"scripts": {
+		"tf:init": "terraform init",
+		"tf:plan": "terraform plan -out=tfplan",
+		"tf:apply": "terraform apply \"tfplan\"",
+		"tf:destroy": "terraform destroy -auto-approve",
+		"tf:format": "terraform fmt -recursive",
+		"tf:validate": "terraform validate"
+	},
+	"keywords": ["terraform", "aws", "ec2"],
+	"author": "Rafael",
+	"license": "MIT"
+}
+
