@@ -15,3 +15,13 @@ variable "region" {
     type = string
     default = "us-east-2"
 }
+
+variable "security_group_id_aws_server" {
+  description = "The ID of the security group to the EC2 instance"
+  type        = string
+}
+
+variable "security_group_id_db" {
+  description = "The ID of the security group to the RDS database"
+  type        = string
+}
