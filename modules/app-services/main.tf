@@ -11,9 +11,8 @@ data "aws_ami" "ubuntu" {
         values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
     }
 
-    owners = ["099720109477"] # The ID of the official AWS Ubuntu image provider
+    owners = ["099720109477"] # The ID of the official AWS Ubuntu image provider  
 }
-
 
  
 # Declares the EC2 instance resource
@@ -22,10 +21,10 @@ resource "aws_instance" "aws_server" {
     instance_type = "t3.micro"
 
     # Adds to the instance the security group created in aws_security_group.tf
-    vpc_security_group_ids = [module.network.main.aws_sg.id]
+    vpc_security_group_ids = [var.security_group_id_aws_server]
 
     tags = {
-        Name = var.namePrefix + "_EC2_Instance"
+        Name = "${var.namePrefix}-ec2-instance"
     }
 }
 
@@ -39,13 +38,35 @@ resource "aws_db_instance" "default_rds_db" {
     engine_version         = "16.3"
     storage_type           = "gp2"
 
-    username               = "posgres" # Replace with your desired username
-    password               = var.rds_password # Replace with a secure password
+    username               = "postgres" # Replace with your desired username
+    password               = var.rdsPassword # Replace with a secure password
 
     skip_final_snapshot    = true
     publicly_accessible    = false
 
+    vpc_security_group_ids = [var.security_group_id_db]
+}
 
-    vpc_security_group_ids = [module.network.main.db_sg.id]
+# ------------- S3 Bucket Configuration -----------
+resource "aws_s3_bucket" "bucket_logs" {
+    bucket = "bucket_logs"
+
+    tags = {
+        Name = "${var.namePrefix}-bucket-logs"
+    }
+}
+
+resource "aws_s3_bucket_ownership_controls" "bucket_logs" {
+    bucket = aws_s3_bucket.bucket_logs.id
+    rule {
+        object_ownership = "BucketOwnerPreferred"
+    }
+}
+
+resource "aws_s3_bucket_acl" "s3_bucket" {
+    depends_on = [aws_s3_bucket_ownership_controls.bucket_logs]
+
+    bucket = aws_s3_bucket.bucket_logs.id
+    acl    = "private"
 }
  
