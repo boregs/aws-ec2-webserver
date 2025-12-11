@@ -6,18 +6,21 @@ resource "aws_security_group" "aws_sg"{
         from_port = var.ssh_port
         to_port = var.ssh_port
         protocol = var.protocol
-        cdir_blocks = ["177.10.20.30/32"] # Ips allowed to access via SSH | Fake IP, replace with your own
+        cidr_blocks = ["177.10.20.30/32"] # Ips allowed to access via SSH | Fake IP, replace with your own
     }
 
     ingress {
         from_port = var.http_port
         to_port = var.http_port
         protocol = var.protocol
-        cdir_blocks = ["?"] # Ips allowed to access via HTTP
+        cidr_blocks = [] # Ips allowed to access via HTTP
     }
  
     egress {
-        cdir_blocks = ["?"] # Ips allowed to exit the instance
+        from_port = 0
+        to_port = 0
+        protocol = "-1"
+        cidr_blocks = [] # Ips allowed to exit the instance
     }
 }
 
@@ -26,12 +29,15 @@ resource "aws_security_group" "db_sg"{
     description = "Security group for AWS Project Instance RDS Database, letting in only SSH traffic"
 
     ingress {
-        from_port = var.rds_port
+        from_port = var.ssh_port
         to_port = var.rds_port
         protocol = var.protocol
         
     }
     egress {
-        cdir_blocks = ["?"] # Ips allowed to exit the database
+        from_port = 0
+        to_port = 0
+        protocol = "-1"
+        cidr_blocks = [] # Ips allowed to exit the database
     }
 }

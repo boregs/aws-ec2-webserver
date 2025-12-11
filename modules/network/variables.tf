@@ -7,7 +7,7 @@ variable "protocol" {
 variable "rds_port" {
     description = "The port for RDS database"
     type = number
-    default = 5432
+    default = 3306
 }
 
 variable "ssh_port" {
