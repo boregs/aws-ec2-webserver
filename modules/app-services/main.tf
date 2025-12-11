@@ -35,7 +35,7 @@ resource "aws_db_instance" "default_rds_db" {
     instance_class         = "db.t3.micro"
     allocated_storage      = 20
     engine                 = "postgres"
-    engine_version         = "16.3"
+    engine_version         = "16.11"
     storage_type           = "gp2"
 
     username               = "postgres" # Replace with your desired username
@@ -48,25 +48,25 @@ resource "aws_db_instance" "default_rds_db" {
 }
 
 # ------------- S3 Bucket Configuration -----------
-resource "aws_s3_bucket" "bucket_logs" {
-    bucket = "bucket_logs"
+resource "aws_s3_bucket" "bucket-logs" {
+    bucket = "first-aws-bucket-deploy-uhuuuuuuuullegall" # Replace with a unique bucket name
 
     tags = {
         Name = "${var.namePrefix}-bucket-logs"
     }
 }
 
-resource "aws_s3_bucket_ownership_controls" "bucket_logs" {
-    bucket = aws_s3_bucket.bucket_logs.id
+resource "aws_s3_bucket_ownership_controls" "ownership-controls_s3_bucket-logs" {
+    bucket = aws_s3_bucket.bucket-logs.id
     rule {
         object_ownership = "BucketOwnerPreferred"
     }
 }
 
-resource "aws_s3_bucket_acl" "s3_bucket" {
-    depends_on = [aws_s3_bucket_ownership_controls.bucket_logs]
+resource "aws_s3_bucket_acl" "s3-bucket" {
+    depends_on = [aws_s3_bucket_ownership_controls.ownership-controls_s3_bucket-logs]
 
-    bucket = aws_s3_bucket.bucket_logs.id
+    bucket = aws_s3_bucket.bucket-logs.id
     acl    = "private"
 }
  
