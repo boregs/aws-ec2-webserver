@@ -26,6 +26,8 @@ resource "aws_instance" "aws_server" {
     tags = {
         Name = "${var.namePrefix}-ec2-instance"
     }
+
+    user_data = file("${path.module}/user_data.sh")
 }
 
 # ----------- RDS Database Configuration -----------
