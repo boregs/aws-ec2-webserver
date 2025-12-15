@@ -2,6 +2,7 @@
 resource "aws_s3_bucket" "aws-s3-static-website-bucket" {
     bucket = "frontend-end-bucket-boregs" # Replace with a unique bucket name
 
+    force_destroy = true
     tags = {
         Name = "${var.namePrefix}_fronted_end_bucket"
     }
