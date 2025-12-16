@@ -27,8 +27,58 @@ resource "aws_instance" "aws_server" {
         Name = "${var.namePrefix}-ec2-instance"
     }
 
-    user_data = file("${path.module}/user_data.sh")
+    user_data = file("${path.module}/userdata.sh")
+
+    iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
 }
+
+# IAM Role to allow EC2 to write logs to S3 Bucket
+resource "aws_iam_role" "ec2_role" {
+  name = "ec2_logs_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# IAM Policy to allow EC2 to write logs to S3 Bucket
+resource "aws_iam_role_policy" "s3_write_policy" {
+  name = "ec2_write_logs_policy"
+  role = aws_iam_role.ec2_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",     
+          "s3:ListBucket"     
+        ]
+        Resource = [
+          aws_s3_bucket.bucket-logs.arn,
+          "${aws_s3_bucket.bucket-logs.arn}/*"
+        ]
+      }
+    ]
+  })
+}
+
+# IAM Instance Profile to attach the Role to the EC2 Instance
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name = "ec2_logs_profile"
+  role = aws_iam_role.ec2_role.name
+}
+
 
 # ----------- RDS Database Configuration -----------
 
@@ -49,7 +99,7 @@ resource "aws_db_instance" "default_rds_db" {
     vpc_security_group_ids = [var.security_group_id_db]
 }
 
-# ------------- S3 Bucket Configuration -----------
+# ------------- S3 Acess Logs Bucket Configuration -----------
 resource "aws_s3_bucket" "bucket-logs" {
     bucket = "first-aws-bucket-deploy-uhuuuuuuuullegall" # Replace with a unique bucket name
 
@@ -63,6 +113,15 @@ resource "aws_s3_bucket_ownership_controls" "ownership-controls_s3_bucket-logs" 
     rule {
         object_ownership = "BucketOwnerPreferred"
     }
+}
+
+resource "aws_s3_bucket_public_access_block" "logs_block" {
+  bucket = aws_s3_bucket.bucket-logs.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 resource "aws_s3_bucket_acl" "s3-bucket" {
